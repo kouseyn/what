@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像の拡大縮小</title>
+    <style>
+        #image-container {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        #uploaded-image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="image-upload" accept="image/*">
+    <div id="image-container">
+        <img id="uploaded-image" src="" alt="Uploaded Image">
+    </div>
+
+    <script>
+        const imageUploadInput = document.getElementById('image-upload');
+        const imageContainer = document.getElementById('image-container');
+        const uploadedImage = document.getElementById('uploaded-image');
+
+        imageUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    uploadedImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        let scale = 1;
+
+        imageContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            scale += e.deltaY * -0.01;
+            scale = Math.min(Math.max(0.1, scale), 4);
+            uploadedImage.style.transform = `scale(${scale})`;
+        });
+    </script>
+</body>
+</html>
