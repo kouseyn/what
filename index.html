@@ -1075,182 +1075,76 @@ canvas.addEventListener("touchend", () => {
 
 </script>
 
-<script>
-  // タッチイベントの初期位置
 
-  
-  // タッチ開始時のイベントリスナー
+<script>
+  // 初期ピンチジェスチャーの距離を保存する変数
+  let initialPinchDistance = 0;
+
+  // 画像の初期位置を保存する変数
+  let initialImageX = 0;
+  let initialImageY = 0;
+
+  // 画像の拡大率を保存する変数
+  let currentScale = 1;
+
+  // 画像要素とコンテナ要素の取得
+  const image = document.getElementById('overlay');
+  const container = document.getElementById('video-container');
+
+  // タッチスタートイベントのリスナー
   container.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
+    if (e.touches.length === 2) {
+      // ピンチジェスチャーが開始されたとき
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+
+      // 2つのタッチポイント間の距離を計算
+      initialPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
+      // 画像の現在の位置を保存
+      initialImageX = parseFloat(getComputedStyle(image).left);
+      initialImageY = parseFloat(getComputedStyle(image).top);
+    }
   });
-  
-  // タッチ移動時のイベントリスナー
+
+  // タッチムーブイベントのリスナー
   container.addEventListener('touchmove', (e) => {
-    if (!touchStartX || !touchStartY) return;
-  
-    const touchEndX = e.touches[0].clientX;
-    const touchEndY = e.touches[0].clientY;
-  
-    // X軸方向の移動量を計算
-    const deltaX = touchEndX - touchStartX;
-    // Y軸方向の移動量を計算
-    const deltaY = touchEndY - touchStartY;
-  
-    // 画像の新しい位置を計算
-    imageX += deltaX;
-    imageY += deltaY;
-  
-    // 画像の移動範囲を制限する場合、ここで制限処理を追加できます
-  
-    // 画像を新しい位置に移動
-    image.style.transform = `translate(${imageX}px, ${imageY}px)`;
-  
-    // タッチ開始位置を更新
-    touchStartX = touchEndX;
-    touchStartY = touchEndY;
+    if (e.touches.length === 2) {
+      // ピンチジェスチャーが進行中のとき
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+
+      // 2つのタッチポイント間の新しい距離を計算
+      const currentPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
+      // 距離の変化から拡大率を計算
+      const scaleFactor = currentPinchDistance / initialPinchDistance;
+
+      // 拡大率を更新
+      currentScale = scaleFactor;
+
+      // 画像の新しいサイズをセット
+      const newImageWidth = parseFloat(getComputedStyle(image).width) * scaleFactor;
+      const newImageHeight = parseFloat(getComputedStyle(image).height) * scaleFactor;
+
+      // 画像の新しい位置を計算して中央に配置
+      const newImageX = initialImageX - (newImageWidth - parseFloat(getComputedStyle(image).width)) / 2;
+      const newImageY = initialImageY - (newImageHeight - parseFloat(getComputedStyle(image).height)) / 2;
+
+      // 画像の位置とサイズをセット
+      image.style.width = `${newImageWidth}px`;
+      image.style.height = `${newImageHeight}px`;
+      image.style.left = `${newImageX}px`;
+      image.style.top = `${newImageY}px`;
+    }
   });
-  
-  // タッチ終了時のイベントリスナー
+
+  // タッチエンドイベントのリスナー
   container.addEventListener('touchend', () => {
-    // タッチ終了時には初期化
-    touchStartX = 0;
-    touchStartY = 0;
+    // ピンチジェスチャーが終了したとき
+    initialPinchDistance = 0;
   });
 </script>
-
-<script>
-  // ボタンがクリックされたらリダイレクトする関数
-  document.getElementById("camera-toggle").addEventListener("click", function() {
-      // demo/index.html にリダイレクト
-      window.location.href = "gallery.html";
-  });
-</script>
-<script>
- // 初期ピンチジェスチャーの距離を保存する変数
-let initialPinchDistance = 0;
-
-// 初期画像のサイズを保存する変数
-let initialImageWidth = 0;
-
-// 画像の拡大率を保存する変数
-let currentScale = 1;
-
-// 画像の初期位置を保存する変数
-let initialImageX = 0;
-let initialImageY = 0;
-
-// 画像要素とコンテナ要素の取得
-const image = document.getElementById('overlay');
-const container = document.getElementById('video-container');
-
-// タッチスタートイベントのリスナー
-container.addEventListener('touchstart', (e) => {
-  if (e.touches.length === 2) {
-    // ピンチジェスチャーが開始されたとき
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-
-    // 2つのタッチポイント間の距離を計算
-    initialPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
-
-    // 画像の現在の幅を保存
-    initialImageWidth = parseFloat(getComputedStyle(image).width);
-
-    // 画像の現在の位置を保存
-    initialImageX = imageX;
-    initialImageY = imageY;
-  }
-});
-
-// タッチムーブイベントのリスナー
-container.addEventListener('touchmove', (e) => {
-  if (e.touches.length === 2) {
-    // ピンチジェスチャーが進行中のとき
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-
-    // 2つのタッチポイント間の新しい距離を計算
-    const currentPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
-
-    // 距離の変化から拡大率を計算
-    const scaleFactor = currentPinchDistance / initialPinchDistance;
-
-    // 新しい画像の幅を計算
-    const newImageWidth = initialImageWidth * scaleFactor;
-
-    // 拡大率を更新
-    currentScale = scaleFactor;
-
-    // 画像の新しい位置を計算
-    const translateX = (container.clientWidth - newImageWidth) / 2 + initialImageX * scaleFactor;
-    const translateY = (container.clientHeight - parseFloat(getComputedStyle(image).height)) / 2 + initialImageY * scaleFactor;
-
-    // 画像の新しいサイズと位置をセット
-    image.style.width = `${newImageWidth}px`;
-    image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-  }
-});
-
-// タッチエンドイベントのリスナー
-container.addEventListener('touchend', () => {
-  // ピンチジェスチャーが終了したとき
-  initialPinchDistance = 0;
-  initialImageWidth = 0;
-});
-
-// 画像の初期位置を保存する変数
-let imageX = 0;
-let imageY = 0;
-
-// タッチ開始位置を保存する変数
-let touchStartX = 0;
-let touchStartY = 0;
-
-// 画像を移動させる関数
-function moveDrawnElements(deltaX, deltaY) {
-  imageX += deltaX;
-  imageY += deltaY;
-
-  // 画像の移動範囲を制限する場合、ここで制限処理を追加できます
-
-  // 画像を新しい位置に移動
-  image.style.transform = `translate(${imageX}px, ${imageY}px)`;
-}
-
-// タッチ開始イベントのリスナー
-container.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-});
-
-// タッチ移動イベントのリスナー
-container.addEventListener("touchmove", (e) => {
-  if (!drawing) return;
-
-  const newX = e.touches[0].clientX;
-  const newY = e.touches[0].clientY;
-
-  const deltaX = newX - touchStartX;
-  const deltaY = newY - touchStartY;
-
-  // 既存の描画を移動させる関数を呼び出す
-  moveDrawnElements(deltaX, deltaY);
-
-  touchStartX = newX;
-  touchStartY = newY;
-});
-
-// タッチ終了イベントのリスナー
-container.addEventListener("touchend", () => {
-  drawing = false;
-});
-
-// ボタンがクリックされたらリダイレクトする関数
-document.getElementById("camera-toggle").addEventListener("click", function() {
-  // demo/index.html にリダイレクト
-  window.location.href = "gallery.html";
-});
 
 </script>
 
