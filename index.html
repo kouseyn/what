@@ -1130,41 +1130,40 @@ canvas.addEventListener("touchend", () => {
 
 
 <script>
-const imageContainer = document.querySelector('#overlay');
+  const imageContainer = document.getElementById('overlay');
 
-let initialDistance = 0;
-let currentDistance = 0;
-let currentScale = 1; // 追加: 現在の拡大率
+  let initialDistance = 0;
+  let currentDistance = 0;
+  let currentScale = 1; // 現在の拡大率
 
-imageContainer.addEventListener('touchstart', (e) => {
+  imageContainer.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
-        initialDistance = Math.hypot(
-            e.touches[0].pageX - e.touches[1].pageX,
-            e.touches[0].pageY - e.touches[1].pageY
-        );
+      initialDistance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
     }
-});
+  });
 
-imageContainer.addEventListener('touchmove', (e) => {
+  imageContainer.addEventListener('touchmove', (e) => {
     if (e.touches.length === 2) {
-        currentDistance = Math.hypot(
-            e.touches[0].pageX - e.touches[1].pageX,
-            e.touches[0].pageY - e.touches[1].pageY
-        );
+      currentDistance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
 
-        const scale = currentDistance / initialDistance;
-        currentScale *= scale; // 現在の拡大率を更新
-        const img = imageContainer.querySelector('img');
-        img.style.transform = `scale(${currentScale})`;
+      const scale = currentDistance / initialDistance;
+      currentScale *= scale; // 現在の拡大率を更新
+      const img = imageContainer.querySelector('img');
+      img.style.transform = `scale(${currentScale})`;
     }
-});
+  });
 
-imageContainer.addEventListener('touchend', () => {
+  imageContainer.addEventListener('touchend', () => {
     initialDistance = currentDistance = 0;
-});
+  });
+</script>
 
-
-  </script>
 
 <script>
   // ボタンがクリックされたらリダイレクトする関数
@@ -1175,7 +1174,5 @@ imageContainer.addEventListener('touchend', () => {
 </script>
 
 </body>
- 
-</html>
  
 </html>
