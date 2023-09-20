@@ -1127,44 +1127,43 @@ canvas.addEventListener("touchend", () => {
     touchStartY = 0;
   });
 </script>
-<script>
-// 既存の変数を再利用
-overlay = document.getElementById('overlay');
+   <script>
+        const overlay = document.getElementById('overlay');
+        let initialDistance = 0;
+        let currentDistance = 0;
+        let currentScale = 1;
 
-overlay.addEventListener('touchstart', (e) => {
-    // 以前に宣言された変数 overlay を再利用
-    if (e.touches.length === 2) {
-        // 2本の指でタッチされた場合、初期距離を計算
-        initialDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-    }
-});
+        overlay.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        });
 
-overlay.addEventListener('touchmove', (e) => {
-    // 以前に宣言された変数 overlay を再利用
-    if (e.touches.length === 2) {
-        // 2本の指でタッチされた場合、現在の距離を計算
-        currentDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
+        overlay.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
 
-        // スケールを計算して画像を拡大または縮小
-        const scale = currentDistance / initialDistance;
-        currentScale *= scale;
+                const scale = currentDistance / initialDistance;
+                currentScale *= scale;
 
-        // 最小・最大スケールを設定（任意で調整可能）
-        const minScale = 0.5; // 最小スケール
-        const maxScale = 3.0; // 最大スケール
-        currentScale = Math.min(Math.max(currentScale, minScale), maxScale);
+                const minScale = 0.5;
+                const maxScale = 3.0;
+                currentScale = Math.min(Math.max(currentScale, minScale), maxScale);
 
-        // 以前に宣言された変数 overlay を再利用
-        overlay.style.transform = `scale(${currentScale})`;
-    }
-});
+                overlay.style.transform = `scale(${currentScale}) translate(-50%, -50%)`;
+            }
+        });
 
+        overlay.addEventListener('touchend', () => {
+            initialDistance = currentDistance = 0;
+        });
+    </script>
 overlay.addEventListener('touchend', () => {
     // タッチが終了した場合、初期距離と現在の距離をリセット
     initialDistance = currentDistance = 0;
